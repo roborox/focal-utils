@@ -1,0 +1,54 @@
+{
+  "name": "@roborox_int/focal-utils",
+  "version": "0.0.1",
+  "main": "build/lib/index.js",
+  "types": "build/lib/index.d.ts",
+  "files": [
+    "build",
+    "typings.d.ts"
+  ],
+  "scripts": {
+    "build": "npm run lint && npm run build-lib",
+    "build-lib": "rimraf ./build && tsc && npm run copy-assets",
+    "copy-json-to-lib": "cpx \"./src/**/*.json\" ./build",
+    "copy-assets": "npm run copy-json-to-lib",
+    "test": "jest",
+    "lint": "eslint --ext .js,.ts,.ts,.tsx ./",
+    "lint:fix": "eslint --ext .js,.ts,.ts,.tsx ./ --fix",
+    "ci": "sh ./scripts/ci.sh",
+    "release": "sh ./scripts/release.sh"
+  },
+  "devDependencies": {
+    "@babel/core": "7.8.4",
+    "@semantic-release/changelog": "5.0.0",
+    "@semantic-release/commit-analyzer": "8.0.1",
+    "@semantic-release/git": "9.0.0",
+    "@semantic-release/npm": "7.0.2",
+    "@semantic-release/release-notes-generator": "9.0.0",
+    "@testing-library/react": "^9.4.1",
+    "@testing-library/jest-dom": "^5.1.1",
+    "@roborox/eslint-config-default": "2.1.1",
+    "@types/jest": "^25.1.2",
+    "babel-loader": "8.0.6",
+    "cpx": "1.5.0",
+    "eslint": "6.8.0",
+    "husky": "4.2.2",
+    "jest": "^25.1.0",
+    "rimraf": "3.0.2",
+    "semantic-release": "17.0.2",
+    "ts-jest": "^25.2.0",
+    "ts-loader": "6.2.1",
+    "ts-mockito": "^2.5.0",
+    "typescript": "3.7.5",
+    "@grammarly/focal": "^0.8.1",
+    "rxjs": "^6.5.4",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  },
+  "peerDependencies": {
+    "@grammarly/focal": ">= 0.8.0",
+    "rxjs": ">= 6.5.0",
+    "react": ">= 16.9.0"
+  },
+  "dependencies": {}
+}
