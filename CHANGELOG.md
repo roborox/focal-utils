@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/roborox/focal-utils/compare/v1.1.1...v1.2.0) (2020-02-24)
+
+
+### Features
+
+* function lift for lifting components ([114eb05](https://github.com/roborox/focal-utils/commit/114eb0523d009344f150278ffbef94ee8f317bc8))
+
 ## [1.1.1](https://github.com/roborox/focal-utils/compare/v1.1.0...v1.1.1) (2020-02-24)
 
 
