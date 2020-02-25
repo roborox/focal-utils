@@ -1,8 +1,11 @@
 import { Observable } from "rxjs"
 import { useEffect, useState } from "react"
-import { Atom } from "@grammarly/focal"
 
-export function useRx<T>(atom: Atom<T>): T
+interface HasGet<T> {
+	get(): T
+}
+
+export function useRx<T>(hasGet: Observable<T> & HasGet<T>): T
 export function useRx<T>(observable: Observable<T>): T | null
 export function useRx<T>(observable: Observable<T>, initial: T): T
 export function useRx<T>(observable: Observable<T>, initial?: T): T | null {
