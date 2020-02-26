@@ -1,3 +1,18 @@
+# [1.3.0](https://github.com/roborox/focal-utils/compare/v1.2.0...v1.3.0) (2020-02-26)
+
+
+### Bug Fixes
+
+* removed unneeded atom peer dependency ([148d1e2](https://github.com/roborox/focal-utils/commit/148d1e205f3e52e4687102df1319904b693eaac4))
+
+
+### Features
+
+* added Loading component, loadList, load ([a775063](https://github.com/roborox/focal-utils/commit/a77506343a55c843f96ecdcbc545f76864a7779d))
+* byKey lens for immutable's Map ([0183120](https://github.com/roborox/focal-utils/commit/0183120b01043cce38da4ac89eeaaa247e9fc765))
+* byKeyPartial ([01b4175](https://github.com/roborox/focal-utils/commit/01b4175baf945776430bd8b80162baa057fe831c))
+* moved rx components to rxjs-react ([c37ef04](https://github.com/roborox/focal-utils/commit/c37ef0484e68f44b1a0de90c2e4cdfb046387927))
+
 # [1.2.0](https://github.com/roborox/focal-utils/compare/v1.1.1...v1.2.0) (2020-02-24)
 
 
