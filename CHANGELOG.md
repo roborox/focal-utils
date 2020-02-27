@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/roborox/focal-utils/compare/v1.4.0...v1.4.1) (2020-02-27)
+
+
+### Bug Fixes
+
+* load reworked ([428098b](https://github.com/roborox/focal-utils/commit/428098b77a43e7c4591d7cef30c011efc29ccce3))
+
 # [1.4.0](https://github.com/roborox/focal-utils/compare/v1.3.2...v1.4.0) (2020-02-27)
 
 
