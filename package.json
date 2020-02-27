@@ -54,7 +54,8 @@
     "rxjs": ">= 6.5.0",
     "react": ">= 16.9.0",
     "immutable": ">= 4.0.0-rc.12",
-    "list": ">= 2.0.0"
+    "list": ">= 2.0.0",
+    "@grammarly/focal": ">= 0.8.0"
   },
   "dependencies": {
     "@roborox/rxjs-react": "^1.0.0"
