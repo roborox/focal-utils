@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/roborox/focal-utils/compare/v1.3.1...v1.3.2) (2020-02-27)
+
+
+### Bug Fixes
+
+* loadArray implemented ([ea3e256](https://github.com/roborox/focal-utils/commit/ea3e2560fb5b47b27aaf298919a256535f402396))
+
 ## [1.3.1](https://github.com/roborox/focal-utils/compare/v1.3.0...v1.3.1) (2020-02-27)
 
 
