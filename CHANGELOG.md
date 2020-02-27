@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/roborox/focal-utils/compare/v1.3.0...v1.3.1) (2020-02-27)
+
+
+### Bug Fixes
+
+* added peer dependency for focal ([2615342](https://github.com/roborox/focal-utils/commit/26153428018be974efe3955231a1ad452e05cf2a))
+
 # [1.3.0](https://github.com/roborox/focal-utils/compare/v1.2.0...v1.3.0) (2020-02-26)
 
 
