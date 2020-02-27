@@ -1,7 +1,10 @@
-import { Atom } from "@grammarly/focal"
-import { LoadingState } from "./domain"
+import {Atom} from "@grammarly/focal"
+import {LoadingState} from "./domain"
+import { loadList } from "./list"
+import { loadArray } from "./array"
+import { Loading } from "./component"
 
-export async function loadFull<T, R>(
+async function loadFull<T, R>(
 	promise: Promise<T>,
 	atom: Atom<LoadingState<R>>,
 	mapper: (t: T) => R,
@@ -17,6 +20,8 @@ export async function loadFull<T, R>(
 	}
 }
 
-export async function load<T>(promise: Promise<T>, atom: Atom<LoadingState<T>>) {
+async function load<T>(promise: Promise<T>, atom: Atom<LoadingState<T>>) {
 	await loadFull(promise, atom, x => x, () => {})
 }
+
+export { loadFull, load, LoadingState, loadList, loadArray, Loading }
