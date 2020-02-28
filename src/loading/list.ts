@@ -13,8 +13,19 @@ export interface ListAtoms<Id, T extends HasId<Id>> extends LoadAtoms<List<Id>> 
 
 export async function loadList<Id, T extends HasId<Id>>(
 	promise: Promise<T[]>,
-	atoms: ListAtoms<Id, T>,
-) {
+	value: ListAtoms<Id, T>,
+): Promise<void>
+export async function loadList<Id, T extends HasId<Id>>(
+	promise: Promise<T[]>,
+	value: Atom<LoadingState<List<Id>>>,
+	map: Atom<Map<Id, T>>,
+): Promise<void>
+export async function loadList<Id, T extends HasId<Id>>(
+	promise: Promise<T[]>,
+	value: ListAtoms<Id, T> | Atom<LoadingState<List<Id>>>,
+	map?: Atom<Map<Id, T>>,
+): Promise<void> {
+	const atoms = "value" in value ? value : listStateToAtoms(value, map!!)
 	await loadFull(
 		promise,
 		xs => from(xs.map((x) => x.id)),

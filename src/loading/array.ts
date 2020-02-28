@@ -12,8 +12,19 @@ interface ArrayAtoms<Id, T extends HasId<Id>> extends LoadAtoms<Id[]> {
 
 export async function loadArray<Id, T extends HasId<Id>>(
 	promise: Promise<T[]>,
-	atoms: ArrayAtoms<Id, T>,
-) {
+	value: Atom<LoadingState<Id[]>>,
+	map: Atom<Map<Id, T>>
+): Promise<void>
+export async function loadArray<Id, T extends HasId<Id>>(
+	promise: Promise<T[]>,
+	value: ArrayAtoms<Id, T>,
+): Promise<void>
+export async function loadArray<Id, T extends HasId<Id>>(
+	promise: Promise<T[]>,
+	value: ArrayAtoms<Id, T> | Atom<LoadingState<Id[]>>,
+	map?: Atom<Map<Id, T>>,
+): Promise<void> {
+	const atoms = "value" in value ? value : arrayStateToAtoms(value, map!!)
 	await loadFull(
 		promise,
 		xs => xs.map((x) => x.id),

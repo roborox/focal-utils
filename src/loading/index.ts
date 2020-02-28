@@ -14,8 +14,9 @@ async function loadFull<T, R>(
 	promise: Promise<T>,
 	mapper: (t: T) => R,
 	beforeSet: (t: T) => void,
-	atoms: LoadAtoms<R>,
-) {
+	value: LoadAtoms<R> | Atom<LoadingState<R>>,
+): Promise<void> {
+	const atoms: LoadAtoms<R> = "value" in value ? value : stateToAtoms(value)
 	atoms.loading && atoms.loading.set(true)
 	atoms.error && atoms.error.set(undefined)
 	try {
@@ -29,7 +30,7 @@ async function loadFull<T, R>(
 	}
 }
 
-async function load<T>(promise: Promise<T>, atoms: LoadAtoms<T>) {
+async function load<T>(promise: Promise<T>, atoms: LoadAtoms<T>): Promise<void> {
 	await loadFull(promise, x => x, () => {}, atoms)
 }
 
