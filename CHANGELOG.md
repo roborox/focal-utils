@@ -1,3 +1,10 @@
+## [1.4.6](https://github.com/roborox/focal-utils/compare/v1.4.5...v1.4.6) (2020-02-28)
+
+
+### Bug Fixes
+
+* removed index exports ([2e694ac](https://github.com/roborox/focal-utils/commit/2e694ac03a8355e7714ff3b4f1108035c3b69143))
+
 ## [1.4.5](https://github.com/roborox/focal-utils/compare/v1.4.4...v1.4.5) (2020-02-28)
 
 
