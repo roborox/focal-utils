@@ -17,16 +17,16 @@ async function loadFull<T, R>(
 	value: LoadAtoms<R> | Atom<LoadingState<R>>,
 ): Promise<void> {
 	const atoms: LoadAtoms<R> = "get" in value ? stateToAtoms(value) : value
-	atoms.loading && atoms.loading.set(true)
-	atoms.error && atoms.error.set(undefined)
+	atoms.loading?.set(true)
+	atoms.error?.set(undefined)
 	try {
 		const result = await promise
 		beforeSet(result)
 		atoms.value.set(mapper(result))
-		atoms.loading && atoms.loading.set(false)
+		atoms.loading?.set(false)
 	} catch (e) {
-		atoms.loading && atoms.loading.set(false)
-		atoms.error && atoms.error.set(e)
+		atoms.loading?.set(false)
+		atoms.error?.set(e)
 	}
 }
 
