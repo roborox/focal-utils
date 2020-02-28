@@ -16,7 +16,7 @@ async function loadFull<T, R>(
 	beforeSet: (t: T) => void,
 	value: LoadAtoms<R> | Atom<LoadingState<R>>,
 ): Promise<void> {
-	const atoms: LoadAtoms<R> = "value" in value ? value : stateToAtoms(value)
+	const atoms: LoadAtoms<R> = "get" in value ? stateToAtoms(value) : value
 	atoms.loading && atoms.loading.set(true)
 	atoms.error && atoms.error.set(undefined)
 	try {

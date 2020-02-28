@@ -25,7 +25,7 @@ export async function loadList<Id, T extends HasId<Id>>(
 	value: ListAtoms<Id, T> | Atom<LoadingState<List<Id>>>,
 	map?: Atom<Map<Id, T>>,
 ): Promise<void> {
-	const atoms = "value" in value ? value : listStateToAtoms(value, map!!)
+	const atoms = "get" in value ? listStateToAtoms(value, map!!) : value
 	await loadFull(
 		promise,
 		xs => from(xs.map((x) => x.id)),
