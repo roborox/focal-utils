@@ -1,5 +1,3 @@
-export interface LoadingState<T> {
-	loading: boolean
-	value?: T
-	error?: any
-}
+import { LoadingState as _LoadingState } from "@roborox/rxjs-react/build/to-rx"
+
+export type LoadingState<T> = _LoadingState<T>
