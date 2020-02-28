@@ -1,3 +1,10 @@
+## [1.4.7](https://github.com/roborox/focal-utils/compare/v1.4.6...v1.4.7) (2020-02-28)
+
+
+### Bug Fixes
+
+* Loading moved to rxjs-react ([74215a4](https://github.com/roborox/focal-utils/commit/74215a4413b61fb1e40fca45edbdc821f8c7726e))
+
 ## [1.4.6](https://github.com/roborox/focal-utils/compare/v1.4.5...v1.4.6) (2020-02-28)
 
 

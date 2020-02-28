@@ -1,6 +1,6 @@
 {
   "name": "@roborox/focal-utils",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "main": "build/lib/index.js",
   "types": "build/lib/index.d.ts",
   "files": [
