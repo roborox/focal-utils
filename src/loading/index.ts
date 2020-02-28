@@ -30,8 +30,11 @@ async function loadFull<T, R>(
 	}
 }
 
-async function load<T>(promise: Promise<T>, atoms: LoadAtoms<T>): Promise<void> {
-	await loadFull(promise, x => x, () => {}, atoms)
+async function load<T>(
+	promise: Promise<T>,
+	value: LoadAtoms<T> | Atom<LoadingState<T>>,
+): Promise<void> {
+	await loadFull(promise, x => x, () => {}, value)
 }
 
 function stateToAtoms<T>(state: Atom<LoadingState<T>>): LoadAtoms<T> {
