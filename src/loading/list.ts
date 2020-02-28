@@ -1,7 +1,8 @@
 import { Atom } from "@grammarly/focal"
 import { from, List } from "list/methods"
 import { Map } from "immutable"
-import { LoadAtoms, loadFull, LoadingState } from "./index"
+import { LoadAtoms, loadFull } from "./index"
+import { LoadingState } from "./domain"
 
 interface HasId<T> {
 	id: T
