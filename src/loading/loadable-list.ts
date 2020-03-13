@@ -1,23 +1,20 @@
 import { Atom } from "@grammarly/focal"
-import { LoadingState } from "./domain"
 import { load } from "."
+import { LoadingStatus, loadingStatusIdle } from "@roborox/rxjs-react/build/to-rx"
 
 export type LoadableListLoader<D, C> = (continuation: C | null) => Promise<[D[], C]>
 
 export type LoadableListState<D, C> = {
 	items: D[],
-	loadingState: LoadingState<[D[], C | null]>,
+	status: LoadingStatus,
+	continuation: C | null,
 	finished: boolean,
 }
 
 export const loadableListStateIdle = <D, C>(): LoadableListState<D, C> => ({
 	items: [],
-	loadingState: {
-		status: {
-			status: "idle",
-		},
-		value: [[], null],
-	},
+	status: loadingStatusIdle,
+	continuation: null,
 	finished: false,
 })
 
@@ -26,23 +23,20 @@ export const createLoadableList = <D, C>(loader: LoadableListLoader<D, C>, sourc
 		const finishedLens = source.lens("finished")
 
 		if (!finishedLens.get()) {
-			const state = source.lens("loadingState")
+			const promise = loader(source.lens("continuation").get())
 
-			const [, continuation] = source.lens("loadingState").lens("value").get()
-			const promise = loader(continuation)
-
-			await load(promise, state)
+			await load(promise, { status: source.lens("status") })
 
 			promise
-				.then(([nextItems]) => {
+				.then(([nextItems, continuation]) => {
 					if (nextItems.length === 0) {
 						finishedLens.set(true)
 					}
 
 					source.lens("items").modify((prev) => prev.concat(nextItems))
+					source.lens("continuation").set(continuation)
 				})
 				.catch(() => { /** No-op */ })
-
 
 		} else {
 			console.warn("Loadable list already finished")
