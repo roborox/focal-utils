@@ -1,6 +1,5 @@
 import { Map } from "immutable"
 import { Atom } from "@grammarly/focal"
-import { loadingStatusIdle, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 import { LoadingState } from "./domain"
 import { loadArray } from "./array"
 
@@ -18,13 +17,17 @@ describe("loadArray", () => {
 	test("should load to LoadingState", async () => {
 		expect.assertions(1)
 		const ids = Atom.create<LoadingState<string[]>>({
-			status: loadingStatusIdle,
+			status: {
+				status: "idle",
+			},
 			value: [],
 		})
 		const map = Atom.create(Map<string, Data>())
 		await loadArray(fetchData(), ids, map)
 		expect(ids.get()).toEqual({
-			status: loadingStatusSuccess,
+			status: {
+				status: "success",
+			},
 			value: ["0", "1", "2"],
 		})
 	})

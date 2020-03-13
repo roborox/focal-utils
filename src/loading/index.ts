@@ -1,6 +1,5 @@
 import { Atom } from "@grammarly/focal"
-import { LoadingStatus, loadingStatusLoading, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
-import { LoadingState } from "./domain"
+import { LoadingState, LoadingStatus } from "./domain"
 
 export interface LoadAtoms<T> {
 	value: Atom<T>
@@ -14,7 +13,9 @@ export async function loadFull<T, R>(
 	beforeSet?: (t: T) => void,
 ): Promise<void> {
 	const atoms: LoadAtoms<R> = "get" in value ? stateToAtoms(value) : value
-	atoms.status.set(loadingStatusLoading)
+	atoms.status.set({
+		status: "loading",
+	})
 
 	try {
 		const result = await promise
@@ -22,7 +23,9 @@ export async function loadFull<T, R>(
 			beforeSet(result)
 		}
 		atoms.value.set(mapper(result))
-		atoms.status.set(loadingStatusSuccess)
+		atoms.status.set({
+			status: "success",
+		})
 	} catch (e) {
 		atoms.status.set({
 			error: e,

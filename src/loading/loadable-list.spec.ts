@@ -1,27 +1,8 @@
-import { LoadableListLoader, createLoadableList, LoadableListState, loadableListStateIdle } from "./loadable-list"
 import { Atom } from "@grammarly/focal"
-import { loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
+import { LoadableListLoader, createLoadableList, LoadableListState, loadableListStateIdle } from "./loadable-list"
+import { LoadPageContinuation, ApiData, api } from "../../test/fixtures/api"
 
-export type Data = {
-	id: string,
-	value: number
-}
-
-export type Continuation = number
-
-const createApi = () => {
-	const items = new Array(100).fill(1).map((_, index) => ({
-		id: index.toString(),
-		value: index,
-	}) as Data)
-
-	return {
-		loadPage: (page: Continuation, perPage: number) =>
-			Promise.resolve(items.slice(page * perPage, page * perPage + perPage)),
-	}
-}
-
-type MyListState = LoadableListState<Data, Continuation>
+type MyListState = LoadableListState<ApiData, LoadPageContinuation>
 
 let appState: Atom<{
 	myList: MyListState
@@ -36,14 +17,12 @@ describe("loadable-list", () => {
 
 	test("Should create new loadable list", async () => {
 		expect.assertions(2)
-		const api = createApi()
-
-		const loader: LoadableListLoader<Data, Continuation> = async (continuation) => {
+		const loader: LoadableListLoader<ApiData, LoadPageContinuation> = async (continuation) => {
 			const page = continuation || 0
 			const nextItems = await api.loadPage(page, 10)
 			return [nextItems, page + 1]
 		}
-		const load = createLoadableList<Data, Continuation>(loader, appState.lens("myList"))
+		const load = createLoadableList<ApiData, LoadPageContinuation>(loader, appState.lens("myList"))
 
 		const myListLens = appState.lens("myList")
 		expect(myListLens.get()).toEqual(loadableListStateIdle())
@@ -52,7 +31,9 @@ describe("loadable-list", () => {
 		const firstPage = await api.loadPage(0, 10)
 
 		expect(myListLens.get().loadingState).toEqual({
-			status: loadingStatusSuccess,
+			status: {
+				status: "success",
+			},
 			value: [firstPage, 1],
 		})
 	})
@@ -61,11 +42,11 @@ describe("loadable-list", () => {
 		expect.assertions(3)
 		const ERROR_MESSAGE = "error"
 
-		const loader: LoadableListLoader<Data, Continuation> = async () => {
+		const loader: LoadableListLoader<ApiData, LoadPageContinuation> = async () => {
 			throw new Error(ERROR_MESSAGE)
 		}
 
-		const load = createLoadableList<Data, Continuation>(loader, appState.lens("myList"))
+		const load = createLoadableList<ApiData, LoadPageContinuation>(loader, appState.lens("myList"))
 		const myListLens = appState.lens("myList")
 
 		await load()
