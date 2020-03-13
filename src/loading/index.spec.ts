@@ -1,5 +1,4 @@
 import { Atom } from "@grammarly/focal"
-import { loadingStatusIdle } from "@roborox/rxjs-react/build/to-rx"
 import { LoadingState } from "./domain"
 import { load } from "./index"
 
@@ -13,7 +12,9 @@ describe("Load", () => {
 	test("should load to LoadingState", async () => {
 		expect.assertions(1)
 		const state = Atom.create<LoadingState<null | number>>({
-			status: loadingStatusIdle,
+			status: {
+				status: "idle",
+			},
 			value: null,
 		})
 		await load(getAsyncRandomNumber(), state)
@@ -23,7 +24,9 @@ describe("Load", () => {
 	test("should load to Atoms", async () => {
 		expect.assertions(1)
 		const state = Atom.create<LoadingState<null | number>>({
-			status: loadingStatusIdle,
+			status: {
+				status: "idle",
+			},
 			value: null,
 		})
 		await load(getAsyncRandomNumber(), {
