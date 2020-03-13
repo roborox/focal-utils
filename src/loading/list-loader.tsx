@@ -3,7 +3,7 @@ import { Atom } from "@grammarly/focal"
 import { LoaderCases } from "./domain"
 import { LoadableListState } from "./loadable-list"
 import { Loader } from "./loader"
-import { LoadingStatus } from "@roborox/rxjs-react/build/to-rx"
+import { LoadingStatus, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 
 export type ListLoaderProps<D, C> = {
 	state: Atom<LoadableListState<D, C>>,
@@ -14,7 +14,7 @@ export const ListLoader = <D, C>({
 	state, children, ...restProps
 }: ListLoaderProps<D, C>): React.ReactElement | null => {
 	const firstLoadStatus = state.view<LoadingStatus>(
-		state => state.items.length === 0 ? state.loadingState.status : {status: "success"},
+		state => state.items.length === 0 ? state.status : loadingStatusSuccess,
 	)
 	return <Loader status={firstLoadStatus} {...restProps}>{children}</Loader>
 }

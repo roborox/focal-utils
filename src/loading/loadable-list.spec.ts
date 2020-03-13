@@ -1,6 +1,7 @@
 import { Atom } from "@grammarly/focal"
-import { LoadableListLoader, createLoadableList, LoadableListState, loadableListStateIdle } from "./loadable-list"
-import { LoadPageContinuation, ApiData, api } from "../../test/fixtures/api"
+import { createLoadableList, LoadableListLoader, LoadableListState, loadableListStateIdle } from "./loadable-list"
+import { api, ApiData, LoadPageContinuation } from "../../test/fixtures/api"
+import { loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 
 type MyListState = LoadableListState<ApiData, LoadPageContinuation>
 
@@ -16,7 +17,7 @@ describe("loadable-list", () => {
 	})
 
 	test("Should create new loadable list", async () => {
-		expect.assertions(2)
+		expect.assertions(4)
 		const loader: LoadableListLoader<ApiData, LoadPageContinuation> = async (continuation) => {
 			const page = continuation || 0
 			const nextItems = await api.loadPage(page, 10)
@@ -30,12 +31,9 @@ describe("loadable-list", () => {
 		await load()
 		const firstPage = await api.loadPage(0, 10)
 
-		expect(myListLens.get().loadingState).toEqual({
-			status: {
-				status: "success",
-			},
-			value: [firstPage, 1],
-		})
+		expect(myListLens.get().status).toEqual(loadingStatusSuccess)
+		expect(myListLens.get().continuation).toEqual(1)
+		expect(myListLens.get().items).toEqual(firstPage)
 	})
 
 	test("Should fail request", async () => {
@@ -43,7 +41,7 @@ describe("loadable-list", () => {
 		const ERROR_MESSAGE = "error"
 
 		const loader: LoadableListLoader<ApiData, LoadPageContinuation> = async () => {
-			throw new Error(ERROR_MESSAGE)
+			throw ERROR_MESSAGE
 		}
 
 		const load = createLoadableList<ApiData, LoadPageContinuation>(loader, appState.lens("myList"))
@@ -51,12 +49,12 @@ describe("loadable-list", () => {
 
 		await load()
 
-		const state = myListLens.get().loadingState
-		expect(state.value).toEqual([[], null])
-		expect(state.status.status).toEqual("error")
-
-		if (state.status.status === "error") {
-			expect((state.status.error as Error).message).toEqual(ERROR_MESSAGE)
-		}
+		const state = myListLens.get()
+		expect(state.status).toEqual({
+			status: "error",
+			error: ERROR_MESSAGE,
+		})
+		expect(state.items).toEqual([])
+		expect(state.continuation).toEqual(null)
 	})
 })
