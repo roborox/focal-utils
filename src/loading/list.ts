@@ -30,19 +30,16 @@ export async function loadList<Id, T extends HasId<Id>>(
 	await loadFull(
 		promise,
 		xs => from(xs.map((x) => x.id)),
-		xs => atoms.map.modify((x) => xs.reduce((m, i) => m.set(i.id, i), x)),
 		atoms,
+		xs => atoms.map.modify((x) => xs.reduce((m, i) => m.set(i.id, i), x)),
 	)
 }
 
-export function listStateToAtoms<Id, T extends HasId<Id>>(
+export const listStateToAtoms = <Id, T extends HasId<Id>>(
 	state: Atom<LoadingState<List<Id>>>,
 	map: Atom<Map<Id, T>>,
-): ListAtoms<Id, T> {
-	return {
-		value: state.lens("value"),
-		loading: state.lens("loading"),
-		error: state.lens("error"),
-		map,
-	}
-}
+): ListAtoms<Id, T> => ({
+	value: state.lens("value"),
+	status: state.lens("status"),
+	map,
+})

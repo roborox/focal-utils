@@ -1,43 +1,42 @@
 import { Atom } from "@grammarly/focal"
+import { LoadingStatus, loadingStatusLoading, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 import { LoadingState } from "./domain"
 
 export interface LoadAtoms<T> {
-	value: Atom<T | undefined>
-	loading?: Atom<boolean>,
-	error?: Atom<any | undefined>
+	value: Atom<T>
+	status: Atom<LoadingStatus>,
 }
 
 export async function loadFull<T, R>(
 	promise: Promise<T>,
 	mapper: (t: T) => R,
-	beforeSet: (t: T) => void,
 	value: LoadAtoms<R> | Atom<LoadingState<R>>,
+	beforeSet?: (t: T) => void,
 ): Promise<void> {
 	const atoms: LoadAtoms<R> = "get" in value ? stateToAtoms(value) : value
-	atoms.loading?.set(true)
-	atoms.error?.set(undefined)
+	atoms.status.set(loadingStatusLoading)
+
 	try {
 		const result = await promise
-		beforeSet(result)
+		if (beforeSet) {
+			beforeSet(result)
+		}
 		atoms.value.set(mapper(result))
-		atoms.loading?.set(false)
+		atoms.status.set(loadingStatusSuccess)
 	} catch (e) {
-		atoms.loading?.set(false)
-		atoms.error?.set(e)
+		atoms.status.set({
+			error: e,
+			status: "error",
+		})
 	}
 }
 
-export async function load<T>(
+export const load = async <T extends any>(
 	promise: Promise<T>,
 	value: LoadAtoms<T> | Atom<LoadingState<T>>,
-): Promise<void> {
-	await loadFull(promise, x => x, () => {}, value)
-}
+): Promise<void> => loadFull(promise, x => x, value)
 
-export function stateToAtoms<T>(state: Atom<LoadingState<T>>): LoadAtoms<T> {
-	return {
-		value: state.lens("value"),
-		loading: state.lens("loading"),
-		error: state.lens("error"),
-	}
-}
+export const stateToAtoms = <T>(state: Atom<LoadingState<T>>): LoadAtoms<T> => ({
+	value: state.lens("value"),
+	status: state.lens("status"),
+})
