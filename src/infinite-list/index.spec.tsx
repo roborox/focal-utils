@@ -1,4 +1,4 @@
-import { render, fireEvent } from "@testing-library/react"
+import { fireEvent, render } from "@testing-library/react"
 import { InfiniteList } from "./index"
 import { ListPartLoader } from "./loadable-list"
 import { InfiniteListState, listStateIdle } from "./domain"
@@ -6,7 +6,9 @@ import { Atom, reactiveList } from "@grammarly/focal"
 import React from "react"
 import { Rx } from "@roborox/rxjs-react/build"
 import { act } from "react-dom/test-utils"
-import { Observable, ReplaySubject, Subject } from "rxjs"
+import { Observable, Subject } from "rxjs"
+import { QueueingSubject } from "queueing-subject"
+import { first } from "rxjs/operators"
 
 interface Props {
 	loader: ListPartLoader<number, number>
@@ -34,9 +36,13 @@ function range(from: number, to: number) {
 
 function nextValue<T>(o: Observable<T>): Promise<T> {
 	return new Promise<T>((resolve, reject) => {
-		o.subscribe(
-			x => resolve(x),
-			error => reject(error),
+		o.pipe(first()).subscribe(
+			x => {
+				resolve(x)
+			},
+			error => {
+				reject(error)
+			},
 		)
 	})
 }
@@ -50,7 +56,7 @@ async function sendNextPage(requests: Observable<[number | null, Subject<[number
 describe("InfiniteList", () => {
 	test("should load first page at start and then other pages", async () => {
 		expect.assertions(7)
-		const requests = new ReplaySubject<[number | null, Subject<[number[], number]>]>(1)
+		const requests = new QueueingSubject<[number | null, Subject<[number[], number]>]>()
 
 		const loader: ListPartLoader<number, number> = (c) => {
 			const result = new Subject<[number[], number]>()
