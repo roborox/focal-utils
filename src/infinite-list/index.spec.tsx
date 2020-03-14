@@ -1,10 +1,12 @@
-import { render } from "@testing-library/react"
+import { render, fireEvent } from "@testing-library/react"
 import { InfiniteList } from "./index"
 import { ListPartLoader } from "./loadable-list"
 import { InfiniteListState, listStateIdle } from "./domain"
 import { Atom, reactiveList } from "@grammarly/focal"
 import React from "react"
 import { Rx } from "@roborox/rxjs-react/build"
+import { act } from "react-dom/test-utils"
+import { Observable, ReplaySubject, Subject } from "rxjs"
 
 interface Props {
 	loader: ListPartLoader<number, number>
@@ -13,12 +15,16 @@ interface Props {
 
 const List = ({loader, state}: Props) => {
 	return (
-		<InfiniteList state={state} loader={loader}>{loadNext =>
-			<>
-				<Rx value={reactiveList(state.view("items"), x => <span data-testid={`item_${x}`}>{x}</span>)}/>
-				<input type="button"/>
-			</>
-		}</InfiniteList>
+		<InfiniteList
+			state={state}
+			loader={loader}
+			loading={<span data-testid="loading">loading</span>}
+		>{loadNext =>
+				<>
+					<Rx value={reactiveList(state.view("items"), x => <span key={x} data-testid={`item_${x}`}>{x}</span>)}/>
+					<button data-testid="next" onClick={loadNext}>next</button>
+				</>
+			}</InfiniteList>
 	)
 }
 
@@ -26,15 +32,50 @@ function range(from: number, to: number) {
 	return Array(to - from).fill(0).map((_, idx) => from + idx)
 }
 
+function nextValue<T>(o: Observable<T>): Promise<T> {
+	return new Promise<T>((resolve, reject) => {
+		o.subscribe(
+			x => resolve(x),
+			error => reject(error),
+		)
+	})
+}
+
+async function sendNextPage(requests: Observable<[number | null, Subject<[number[], number]>]>) {
+	const [c, subject] = await nextValue(requests)
+	const start = c || 0
+	subject.next([range(start, start + 5), start + 5])
+}
+
 describe("InfiniteList", () => {
-	test("should load first page at start", async () => {
-		expect.assertions(1)
-		const loader: ListPartLoader<number, number> = async (c) => {
-			const start = c || 0
-			return [range(start, start + 20), start + 20]
+	test("should load first page at start and then other pages", async () => {
+		expect.assertions(7)
+		const requests = new ReplaySubject<[number | null, Subject<[number[], number]>]>(1)
+
+		const loader: ListPartLoader<number, number> = (c) => {
+			const result = new Subject<[number[], number]>()
+			requests.next([c, result])
+			return nextValue(result)
 		}
 		const state = Atom.create<InfiniteListState<number, number>>(listStateIdle())
+
 		const r = render(<List loader={loader} state={state}/>)
+		expect(r.getByTestId("loading")).toHaveTextContent("loading")
+
+		await act(async() => {
+			await sendNextPage(requests)
+		})
 		expect(await r.findByTestId("item_0")).toHaveTextContent("0")
+		expect(await r.findByTestId("item_4")).toHaveTextContent("4")
+		expect(() => r.getByTestId("item_5")).toThrow()
+		expect(() => r.getByTestId("loading")).toThrow()
+
+		await act(async() => {
+			fireEvent.click(r.getByTestId("next"))
+			await sendNextPage(requests)
+		})
+
+		expect(await r.findByTestId("item_5")).toHaveTextContent("5")
+		expect(() => r.getByTestId("item_10")).toThrow()
 	})
 })
