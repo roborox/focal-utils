@@ -1,24 +1,10 @@
 import { Atom } from "@grammarly/focal"
-import { load } from "."
-import { LoadingStatus, loadingStatusIdle } from "@roborox/rxjs-react/build/to-rx"
+import { load } from "../loading"
+import { InfiniteListState } from "./domain"
 
-export type LoadableListLoader<D, C> = (continuation: C | null) => Promise<[D[], C]>
+export type ListPartLoader<D, C> = (continuation: C | null) => Promise<[D[], C]>
 
-export type LoadableListState<D, C> = {
-	items: D[],
-	status: LoadingStatus,
-	continuation: C | null,
-	finished: boolean,
-}
-
-export const loadableListStateIdle = <D, C>(): LoadableListState<D, C> => ({
-	items: [],
-	status: loadingStatusIdle,
-	continuation: null,
-	finished: false,
-})
-
-export const createLoadableList = <D, C>(loader: LoadableListLoader<D, C>, source: Atom<LoadableListState<D, C>>) => {
+export const createLoadNext = <D, C>(loader: ListPartLoader<D, C>, source: Atom<InfiniteListState<D, C>>) => {
 	return async () => {
 		const finishedLens = source.lens("finished")
 

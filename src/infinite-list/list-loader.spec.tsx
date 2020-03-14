@@ -3,37 +3,29 @@ import { Atom } from "@grammarly/focal"
 import { act } from "react-dom/test-utils"
 import { render, waitForElement } from "@testing-library/react"
 import { LoadPageContinuation, ApiData, api } from "../../test/fixtures/api"
-import { LoadableListState, loadableListStateIdle, createLoadableList, LoadableListLoader } from "./loadable-list"
+import { createLoadNext, ListPartLoader } from "./loadable-list"
 import { ListLoader } from "./list-loader"
+import { InfiniteListState, listStateIdle } from "./domain"
 
-type MyListState = LoadableListState<ApiData, LoadPageContinuation>
+type MyListState = InfiniteListState<ApiData, LoadPageContinuation>
 
-let appState: Atom<{
-	myList: MyListState
-}> = Atom.create({
-	myList: loadableListStateIdle(),
-})
+let appState = Atom.create<MyListState>(listStateIdle())
 
-const loader: LoadableListLoader<ApiData, LoadPageContinuation> = async (continuation) => {
+const loader: ListPartLoader<ApiData, LoadPageContinuation> = async (continuation) => {
 	const page = continuation || 0
 	const nextItems = await api.loadPage(page, 10)
 	return [nextItems, page + 1]
 }
-const myList = appState.lens("myList")
-const load = createLoadableList<ApiData, LoadPageContinuation>(loader, myList)
+const load = createLoadNext<ApiData, LoadPageContinuation>(loader, appState)
 
 describe("list-loader", () => {
-	beforeEach(() => {
-		appState = Atom.create({
-			myList: loadableListStateIdle(),
-		})
-	})
+	beforeEach(() => appState.set(listStateIdle()))
 
 	test("should create ListLoader and fetch some data", async () => {
 		expect.assertions(4)
 		const tree = render(
 			<ListLoader
-				state={myList}
+				state={appState}
 				loading={<span data-testid="loading">loading</span>}
 				idle={<span data-testid="idle">idle</span>}
 			>
