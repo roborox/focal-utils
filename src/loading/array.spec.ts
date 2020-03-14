@@ -10,10 +10,6 @@ type Data = {
 
 const data = ["0", "1", "2"].map((id) => ({ id }))
 
-const fetchData = () => new Promise<Data[]>((resolve) => setTimeout(() => {
-	resolve(data)
-}, 500))
-
 describe("loadArray", () => {
 	test("should load to LoadingState", async () => {
 		expect.assertions(1)
@@ -22,7 +18,7 @@ describe("loadArray", () => {
 			value: [],
 		})
 		const map = Atom.create(Map<string, Data>())
-		await loadArray(fetchData(), ids, map)
+		await loadArray(Promise.resolve(data), ids, map)
 		expect(ids.get()).toEqual({
 			status: loadingStatusSuccess,
 			value: ["0", "1", "2"],
