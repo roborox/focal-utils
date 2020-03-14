@@ -3,12 +3,6 @@ import { LoadingState } from "./domain"
 import { load } from "./index"
 import { loadingStatusIdle } from "@roborox/rxjs-react/build/to-rx"
 
-const getAsyncRandomNumber = () => new Promise((resolve) => {
-	setTimeout(() => {
-		resolve(Math.random() * 100)
-	}, 500)
-})
-
 describe("Load", () => {
 	test("should load to LoadingState", async () => {
 		expect.assertions(1)
@@ -16,7 +10,7 @@ describe("Load", () => {
 			status: loadingStatusIdle,
 			value: null,
 		})
-		await load(getAsyncRandomNumber(), state)
+		await load(Promise.resolve(Math.random() * 100), state)
 		expect(state.get().value).toBeTruthy()
 	})
 
@@ -26,7 +20,7 @@ describe("Load", () => {
 			status: loadingStatusIdle,
 			value: null,
 		})
-		await load(getAsyncRandomNumber(), {
+		await load(Promise.resolve(Math.random() * 100), {
 			value: state.lens("value"),
 			status: state.lens("status"),
 		})
