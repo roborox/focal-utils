@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react"
+import React from "react"
 import { LoadingStatus, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 import { Atom } from "@grammarly/focal"
 import { LoaderCases } from "../loading/domain"
