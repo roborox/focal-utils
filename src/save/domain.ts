@@ -9,3 +9,7 @@ export type LoaderCases<R> = {
 	error?: (error: any) => R
 	success: R
 }
+
+export interface HasId<T> {
+	id: T
+}

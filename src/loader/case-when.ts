@@ -1,6 +1,6 @@
 import { Observable } from "rxjs"
 import { map } from "rxjs/operators"
-import { LoaderCases, LoadingStatus } from "./domain"
+import { LoaderCases, LoadingStatus } from "../save/domain"
 
 export const caseWhen = <R extends any>(
 	status: Observable<LoadingStatus>, cases: LoaderCases<R>,

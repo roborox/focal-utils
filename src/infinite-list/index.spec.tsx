@@ -95,7 +95,7 @@ describe("InfiniteList", () => {
 		expect(() => r.getByTestId("item_10")).toThrow()
 	})
 
-	test("should fail first page loading and then retry with success", async () => {
+	test("should fail first page loader and then retry with success", async () => {
 		expect.assertions(8)
 		const ERROR_MESSAGE = "error"
 
