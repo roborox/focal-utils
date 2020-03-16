@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { Observable } from "rxjs"
 import { useRx } from "@roborox/rxjs-react/build/use-rx"
-import { LoaderCases, LoadingStatus } from "./domain"
+import { LoaderCases, LoadingStatus } from "../save/domain"
 import { caseWhen } from "./case-when"
 
 export type LoaderProps = {

@@ -1,6 +1,6 @@
 import { Atom } from "@grammarly/focal"
-import { load } from "../loading"
 import { InfiniteListState } from "./domain"
+import { save } from "../save"
 
 export type ListPartLoader<D, C> = (continuation: C | null) => Promise<[D[], C]>
 
@@ -11,7 +11,7 @@ export const createLoadNext = <D, C>(loader: ListPartLoader<D, C>, source: Atom<
 		if (!finishedLens.get()) {
 			const promise = loader(source.lens("continuation").get())
 
-			await load(promise, { status: source.lens("status") })
+			await save(promise, { status: source.lens("status") })
 
 			promise
 				.then(([nextItems, continuation]) => {

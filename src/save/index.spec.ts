@@ -1,27 +1,27 @@
 import { Atom } from "@grammarly/focal"
 import { loadingStatusIdle } from "@roborox/rxjs-react/build/to-rx"
-import { LoadingState } from "./domain"
-import { load } from "./index"
 import { api, ApiData } from "../../test/fixtures/api"
+import { save } from "."
+import { LoadingState } from "./domain"
 
-describe("Load", () => {
-	test("should load to LoadingState", async () => {
+describe("save", () => {
+	test("should save data to atom", async () => {
 		expect.assertions(1)
 		const state = Atom.create<LoadingState<null | ApiData[]>>({
 			status: loadingStatusIdle,
 			value: null,
 		})
-		await load(api.loadPage(0, 5), state)
+		await save(api.loadPage(0, 5), state)
 		expect(state.get().value).toBeTruthy()
 	})
 
-	test("should load to Atoms", async () => {
+	test("should save to separate atoms", async () => {
 		expect.assertions(1)
 		const state = Atom.create<LoadingState<null | ApiData[]>>({
 			status: loadingStatusIdle,
 			value: null,
 		})
-		await load(api.loadPage(0, 5), {
+		await save(api.loadPage(0, 5), {
 			value: state.lens("value"),
 			status: state.lens("status"),
 		})

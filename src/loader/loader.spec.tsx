@@ -6,7 +6,7 @@ import { render } from "@testing-library/react"
 import { Loader } from "./loader"
 
 describe("Loader", () => {
-	test("should display loading if is loading", async () => {
+	test("should display loader if is loader", async () => {
 		expect.assertions(2)
 		const [, status] = toRx(new Promise<number>(() => {}))
 		const r = render(

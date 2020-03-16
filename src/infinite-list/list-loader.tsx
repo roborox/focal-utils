@@ -1,9 +1,9 @@
 import React from "react"
 import { LoadingStatus, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 import { Atom } from "@grammarly/focal"
-import { LoaderCases } from "../loading/domain"
-import { Loader } from "../loading/loader"
+import { Loader } from "../loader/loader"
 import { InfiniteListState } from "./domain"
+import { LoaderCases } from "../save/domain"
 
 export type ListLoaderProps<D, C> = {
 	state: Atom<InfiniteListState<D, C>>,
