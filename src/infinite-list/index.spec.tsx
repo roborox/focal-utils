@@ -51,6 +51,19 @@ async function sendNextPage(requests: Observable<RequestData>) {
 	])
 }
 
+async function sendError(requests: Observable<RequestData>, error: any) {
+	const [, subject] = await requests.pipe(first()).toPromise()
+	subject.error(error)
+}
+
+const createPartLoader = (requests: Subject<RequestData>): ListPartLoader<number, number> => {
+	return (continuation) => {
+		const result = new Subject<[number[], number]>()
+		requests.next([continuation, result])
+		return result.pipe(first()).toPromise()
+	}
+}
+
 describe("InfiniteList", () => {
 	let state: Atom<InfiniteListState<number, number>>
 	beforeEach(() => {
@@ -60,12 +73,8 @@ describe("InfiniteList", () => {
 	test("should load first page at start and then other pages", async () => {
 		expect.assertions(8)
 		const requests = new QueueingSubject<RequestData>()
+		const partLoader: ListPartLoader<number, number> = createPartLoader(requests)
 
-		const partLoader: ListPartLoader<number, number> = (continuation) => {
-			const result = new Subject<[number[], number]>()
-			requests.next([continuation, result])
-			return result.pipe(first()).toPromise()
-		}
 		const r = render(<Renderable loader={partLoader} state={state}/>)
 		act(() => {
 			sendNextPage(requests)
@@ -88,45 +97,34 @@ describe("InfiniteList", () => {
 
 	test("should fail first page loading and then retry with success", async () => {
 		expect.assertions(8)
-		let calls = 0
 		const ERROR_MESSAGE = "error"
 
 		const requests = new QueueingSubject<[number | null, Subject<[number[], number]>]>()
-		const partLoader: ListPartLoader<number, number> = (continuation) => {
-			const result = new Subject<[number[], number]>()
-			requests.next([continuation, result])
-
-			return result.pipe(first()).toPromise()
-				.then((result) => {
-					if (calls === 0) {
-						calls = calls + 1
-						return Promise.reject(new Error(ERROR_MESSAGE))
-					}
-					return result
-				})
-		}
+		const partLoader = createPartLoader(requests)
 
 		const r = render(<Renderable loader={partLoader} state={state}/>)
-		await act(() => sendNextPage(requests))
+		await act(() => sendError(requests, new Error(ERROR_MESSAGE)))
 
 		expect(r.getByTestId("reload")).toBeTruthy()
 		expect(r.getByTestId("reload")).toHaveAttribute("data-error", ERROR_MESSAGE)
 
 		act(() => {
 			fireEvent.click(r.getByTestId("reload"))
-			sendNextPage(requests)
 		})
 
 		expect(() => r.getByTestId("reload")).toThrow()
 		expect(await r.getByTestId("loading")).toHaveTextContent("loading")
+
+		await act(() => sendNextPage(requests))
 		expect(await r.findByTestId("item_0")).toHaveTextContent("0")
 
 		act(() => {
 			fireEvent.click(r.getByTestId("next"))
-			sendNextPage(requests)
 		})
 
 		expect(r.getByTestId("status")).toHaveTextContent("loading")
+
+		await act(() => sendNextPage(requests))
 		expect(await r.findByTestId("item_5")).toHaveTextContent("5")
 		expect(() => r.getByTestId("item_10")).toThrow()
 	})
