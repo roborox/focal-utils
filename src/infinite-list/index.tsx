@@ -18,7 +18,7 @@ export function InfiniteList<T, C>({ state, loader, loading, error, children }: 
 	useEffect(() => {
 		const current = state.get()
 		if (current.items.length === 0 && current.status.status === "idle") {
-			load()
+			load().then()
 		}
 	}, [])
 
