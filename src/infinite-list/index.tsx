@@ -1,26 +1,33 @@
+import React, { useEffect, useMemo } from "react"
 import { Atom } from "@grammarly/focal"
 import { createLoadNext, ListPartLoader } from "./loadable-list"
 import { ListLoader } from "./list-loader"
-import React, { useEffect } from "react"
 import { InfiniteListState } from "./domain"
+import { LoadingStatus } from "../loading/domain"
 
-export interface Props<T, C> {
+export type InfiniteListProps<T, C> = {
 	state: Atom<InfiniteListState<T, C>>
 	loader: ListPartLoader<T, C>
 	loading?: React.ReactNode,
 	error?: (err: any, loadNext: () => void) => React.ReactNode,
-	children?: (loadNext: () => void) => React.ReactNode
+	children?: (loadNext: () => void, status: Atom<LoadingStatus>) => React.ReactNode
 }
 
-export function InfiniteList<T, C>({state, loader, loading, error, children}: Props<T, C>) {
-	const load = createLoadNext(loader, state)
+export function InfiniteList<T, C>({ state, loader, loading, error, children }: InfiniteListProps<T, C>) {
+	const load = useMemo(() => createLoadNext(loader, state), [state, loader])
+
 	useEffect(() => {
-		const s = state.subscribe(x => {
-			if (x.items.length === 0 && x.status.status === "idle") {
-				load().then()
-			}
-		})
-		return () => s.unsubscribe()
+		const current = state.get()
+		if (current.items.length === 0 && current.status.status === "idle") {
+			load()
+		}
 	}, [])
-	return <ListLoader state={state} loading={loading} error={e => error?.(e, load)}>{children?.(load)}</ListLoader>
+
+	return (
+		<ListLoader state={state} loading={loading} error={e => error?.(e, load)}>
+			{children?.(load, state.lens("status"))}
+		</ListLoader>
+	)
 }
+
+InfiniteList.displayName = "InfiniteList"

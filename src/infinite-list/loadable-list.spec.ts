@@ -1,7 +1,7 @@
 import { Atom } from "@grammarly/focal"
+import { loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 import { createLoadNext, ListPartLoader } from "./loadable-list"
 import { api, ApiData, LoadPageContinuation } from "../../test/fixtures/api"
-import { loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 import { InfiniteListState, listStateIdle } from "./domain"
 
 type MyListState = InfiniteListState<ApiData, LoadPageContinuation>
@@ -41,7 +41,6 @@ describe("loadable-list", () => {
 		}
 
 		const load = createLoadNext<ApiData, LoadPageContinuation>(loader, appState)
-
 		await load()
 
 		const state = appState.get()
