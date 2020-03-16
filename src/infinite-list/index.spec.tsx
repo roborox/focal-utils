@@ -1,86 +1,132 @@
-import { fireEvent, render } from "@testing-library/react"
-import { InfiniteList } from "./index"
-import { ListPartLoader } from "./loadable-list"
-import { InfiniteListState, listStateIdle } from "./domain"
-import { Atom, reactiveList } from "@grammarly/focal"
 import React from "react"
+import { fireEvent, render } from "@testing-library/react"
+import { Atom, reactiveList } from "@grammarly/focal"
 import { Rx } from "@roborox/rxjs-react/build"
 import { act } from "react-dom/test-utils"
 import { Observable, Subject } from "rxjs"
 import { QueueingSubject } from "queueing-subject"
 import { first } from "rxjs/operators"
+import { InfiniteList } from "./index"
+import { ListPartLoader } from "./loadable-list"
+import { InfiniteListState, listStateIdle } from "./domain"
+import { range } from "../../test/utils/range"
 
-interface Props {
+const Renderable = ({ loader, state }: {
 	loader: ListPartLoader<number, number>
 	state: Atom<InfiniteListState<number, number>>
-}
+}) => (
+	<InfiniteList
+		state={state}
+		error={(error, reload) => (
+			<button data-error={(error as Error).message} onClick={reload} data-testid="reload">reload</button>
+		)}
+		loader={loader}
+		loading={<span data-testid="loading">loading</span>}
+	>
+		{load =>
+			<>
+				<Rx value={reactiveList(state.view("items"), x =>
+					<span key={x} data-testid={`item_${x}`}>{x}</span>,
+				)} />
+				<button data-testid="next" onClick={load}>
+					next
+				</button>
 
-const List = ({loader, state}: Props) => {
-	return (
-		<InfiniteList
-			state={state}
-			loader={loader}
-			loading={<span data-testid="loading">loading</span>}
-		>{loadNext =>
-				<>
-					<Rx value={reactiveList(state.view("items"), x => <span key={x} data-testid={`item_${x}`}>{x}</span>)}/>
-					<button data-testid="next" onClick={loadNext}>next</button>
-				</>
-			}</InfiniteList>
-	)
-}
+				<Rx value={state.view("status")}>
+					{t => <span data-testid="status">{t.status}</span>}
+				</Rx>
+			</>
+		}
+	</InfiniteList>
+)
 
-function range(from: number, to: number) {
-	return Array(to - from).fill(0).map((_, idx) => from + idx)
-}
+type RequestData = [number | null, Subject<[number[], number]>]
 
-function nextValue<T>(o: Observable<T>): Promise<T> {
-	return new Promise<T>((resolve, reject) => {
-		o.pipe(first()).subscribe(
-			x => {
-				resolve(x)
-			},
-			error => {
-				reject(error)
-			},
-		)
-	})
-}
-
-async function sendNextPage(requests: Observable<[number | null, Subject<[number[], number]>]>) {
-	const [c, subject] = await nextValue(requests)
-	const start = c || 0
-	subject.next([range(start, start + 5), start + 5])
+async function sendNextPage(requests: Observable<RequestData>) {
+	const [page, subject] = await requests.pipe(first()).toPromise()
+	const startPage = page || 0
+	subject.next([
+		range(startPage, startPage + 5),
+		startPage + 5,
+	])
 }
 
 describe("InfiniteList", () => {
+	let state: Atom<InfiniteListState<number, number>>
+	beforeEach(() => {
+		state = Atom.create(listStateIdle())
+	})
+
 	test("should load first page at start and then other pages", async () => {
-		expect.assertions(7)
-		const requests = new QueueingSubject<[number | null, Subject<[number[], number]>]>()
+		expect.assertions(8)
+		const requests = new QueueingSubject<RequestData>()
 
-		const loader: ListPartLoader<number, number> = (c) => {
+		const partLoader: ListPartLoader<number, number> = (continuation) => {
 			const result = new Subject<[number[], number]>()
-			requests.next([c, result])
-			return nextValue(result)
+			requests.next([continuation, result])
+			return result.pipe(first()).toPromise()
 		}
-		const state = Atom.create<InfiniteListState<number, number>>(listStateIdle())
-
-		const r = render(<List loader={loader} state={state}/>)
-		expect(r.getByTestId("loading")).toHaveTextContent("loading")
-
-		await act(async() => {
-			await sendNextPage(requests)
+		const r = render(<Renderable loader={partLoader} state={state}/>)
+		act(() => {
+			sendNextPage(requests)
 		})
+		expect(await r.getByTestId("loading")).toHaveTextContent("loading")
 		expect(await r.findByTestId("item_0")).toHaveTextContent("0")
 		expect(await r.findByTestId("item_4")).toHaveTextContent("4")
 		expect(() => r.getByTestId("item_5")).toThrow()
 		expect(() => r.getByTestId("loading")).toThrow()
 
-		await act(async() => {
+		act(() => {
 			fireEvent.click(r.getByTestId("next"))
-			await sendNextPage(requests)
+			sendNextPage(requests)
 		})
 
+		expect(r.getByTestId("status")).toHaveTextContent("loading")
+		expect(await r.findByTestId("item_5")).toHaveTextContent("5")
+		expect(() => r.getByTestId("item_10")).toThrow()
+	})
+
+	test("should fail first page loading and then retry with success", async () => {
+		expect.assertions(8)
+		let calls = 0
+		const ERROR_MESSAGE = "error"
+
+		const requests = new QueueingSubject<[number | null, Subject<[number[], number]>]>()
+		const partLoader: ListPartLoader<number, number> = (continuation) => {
+			const result = new Subject<[number[], number]>()
+			requests.next([continuation, result])
+
+			return result.pipe(first()).toPromise()
+				.then((result) => {
+					if (calls === 0) {
+						calls = calls + 1
+						return Promise.reject(new Error(ERROR_MESSAGE))
+					}
+					return result
+				})
+		}
+
+		const r = render(<Renderable loader={partLoader} state={state}/>)
+		await act(() => sendNextPage(requests))
+
+		expect(r.getByTestId("reload")).toBeTruthy()
+		expect(r.getByTestId("reload")).toHaveAttribute("data-error", ERROR_MESSAGE)
+
+		act(() => {
+			fireEvent.click(r.getByTestId("reload"))
+			sendNextPage(requests)
+		})
+
+		expect(() => r.getByTestId("reload")).toThrow()
+		expect(await r.getByTestId("loading")).toHaveTextContent("loading")
+		expect(await r.findByTestId("item_0")).toHaveTextContent("0")
+
+		act(() => {
+			fireEvent.click(r.getByTestId("next"))
+			sendNextPage(requests)
+		})
+
+		expect(r.getByTestId("status")).toHaveTextContent("loading")
 		expect(await r.findByTestId("item_5")).toHaveTextContent("5")
 		expect(() => r.getByTestId("item_10")).toThrow()
 	})

@@ -3,8 +3,7 @@ import { map } from "rxjs/operators"
 import { LoaderCases, LoadingStatus } from "./domain"
 
 export const caseWhen = <R extends any>(
-	status: Observable<LoadingStatus>,
-	cases: LoaderCases<R>,
+	status: Observable<LoadingStatus>, cases: LoaderCases<R>,
 ): Observable<R | null> => {
 	return status.pipe(
 		map(x => {

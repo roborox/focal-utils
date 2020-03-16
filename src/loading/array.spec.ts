@@ -3,12 +3,7 @@ import { Atom } from "@grammarly/focal"
 import { LoadingState } from "./domain"
 import { loadArray } from "./array"
 import { loadingStatusIdle, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
-
-type Data = {
-	id: string
-}
-
-const data = ["0", "1", "2"].map((id) => ({ id }))
+import { api, apiItems, ApiData } from "../../test/fixtures/api"
 
 describe("loadArray", () => {
 	test("should load to LoadingState", async () => {
@@ -17,11 +12,11 @@ describe("loadArray", () => {
 			status: loadingStatusIdle,
 			value: [],
 		})
-		const map = Atom.create(Map<string, Data>())
-		await loadArray(Promise.resolve(data), ids, map)
+		const map = Atom.create(Map<string, ApiData>())
+		await loadArray(api.loadPage(0, 5), ids, map)
 		expect(ids.get()).toEqual({
 			status: loadingStatusSuccess,
-			value: ["0", "1", "2"],
+			value: apiItems.map((item) => item.id).slice(0, 5),
 		})
 	})
 })
