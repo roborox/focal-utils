@@ -1,6 +1,6 @@
 import { Atom } from "@grammarly/focal"
-import { loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
-import { createLoadNext, ListPartLoader } from "./loadable-list"
+import { loadingStatusSuccess } from "@roborox/rxjs-react/build"
+import { createLoadNext, ListPartLoader } from "./create-load-next"
 import { api, ApiData, LoadPageContinuation } from "../../test/fixtures/api"
 import { InfiniteListState, listStateIdle } from "./domain"
 
@@ -8,12 +8,12 @@ type MyListState = InfiniteListState<ApiData, LoadPageContinuation>
 
 let appState: Atom<MyListState>
 
-describe("loadable-list", () => {
+describe("create-load-next", () => {
 	beforeEach(() => {
 		appState = Atom.create(listStateIdle())
 	})
 
-	test("Should create new loadable list", async () => {
+	test("Should create new load next function", async () => {
 		expect.assertions(4)
 		const loader: ListPartLoader<ApiData, LoadPageContinuation> = async (continuation) => {
 			const page = continuation || 0

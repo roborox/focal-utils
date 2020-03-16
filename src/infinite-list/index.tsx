@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from "react"
 import { Atom } from "@grammarly/focal"
-import { createLoadNext, ListPartLoader } from "./loadable-list"
+import { createLoadNext, ListPartLoader } from "./create-load-next"
 import { ListLoader } from "./list-loader"
 import { InfiniteListState } from "./domain"
 
-export type InfiniteListProps<T, C> = {
+export interface InfiniteListProps<T, C> {
 	state: Atom<InfiniteListState<T, C>>
 	loader: ListPartLoader<T, C>
 	loading?: React.ReactNode,
@@ -28,5 +28,3 @@ export function InfiniteList<T, C>({ state, loader, loading, error, children }: 
 		</ListLoader>
 	)
 }
-
-InfiniteList.displayName = "InfiniteList"

@@ -7,7 +7,7 @@ import { Observable, Subject } from "rxjs"
 import { QueueingSubject } from "queueing-subject"
 import { first } from "rxjs/operators"
 import { InfiniteList } from "./index"
-import { ListPartLoader } from "./loadable-list"
+import { ListPartLoader } from "./create-load-next"
 import { InfiniteListState, listStateIdle } from "./domain"
 import { range } from "../../test/utils/range"
 
@@ -27,7 +27,9 @@ const Renderable = ({ loader, state }: {
 			<>
 				<Rx value={reactiveList(state.view("items"), x =>
 					<span key={x} data-testid={`item_${x}`}>{x}</span>,
-				)} />
+				)}>
+					{(renderable) => <div>{renderable}</div>}
+				</Rx>
 				<button data-testid="next" onClick={load}>
 					next
 				</button>

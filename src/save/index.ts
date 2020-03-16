@@ -1,9 +1,9 @@
 import { Atom } from "@grammarly/focal"
-import { loadingStatusLoading, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
+import { createLoadingStatusError, loadingStatusSuccess, loadingStatusLoading } from "@roborox/rxjs-react/build"
 import { LoadingState, LoadingStatus } from "./domain"
 
 export interface LoadAtoms<T> {
-	value?: Atom<T>
+	value?: Atom<T | null>
 	status?: Atom<LoadingStatus>,
 }
 
@@ -19,10 +19,7 @@ export async function save<T>(
 		atoms.value?.set(result)
 		atoms.status?.set(loadingStatusSuccess)
 	} catch (e) {
-		atoms.status?.set({
-			error: e,
-			status: "error",
-		})
+		atoms.status?.set(createLoadingStatusError(e))
 	}
 }
 
