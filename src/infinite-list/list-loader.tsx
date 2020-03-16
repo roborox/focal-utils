@@ -1,22 +1,16 @@
 import React from "react"
-import { LoadingStatus, loadingStatusSuccess } from "@roborox/rxjs-react/build/to-rx"
 import { Atom } from "@grammarly/focal"
-import { Loader } from "../loader/loader"
+import { LoadingStatus, Cases, loadingStatusSuccess, Loader } from "@roborox/rxjs-react/build"
 import { InfiniteListState } from "./domain"
-import { LoaderCases } from "../save/domain"
 
-export type ListLoaderProps<D, C> = {
+export interface ListLoaderProps<D, C> extends Omit<Cases<React.ReactNode>, "success"> {
 	state: Atom<InfiniteListState<D, C>>,
 	children?: React.ReactNode
-} & Omit<LoaderCases<React.ReactNode>, "success">
+}
 
-export const ListLoader = <D, C>({
-	state, children, ...restProps
-}: ListLoaderProps<D, C>): React.ReactElement => {
+export function ListLoader<D, C>({ state, children, ...restProps }: ListLoaderProps<D, C>): React.ReactElement {
 	const firstLoadStatus = state.view<LoadingStatus>(
 		state => state.items.length === 0 ? state.status : loadingStatusSuccess,
 	)
 	return <Loader status={firstLoadStatus} {...restProps}>{children}</Loader>
 }
-
-ListLoader.displayName = "ListLoader"

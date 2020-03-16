@@ -1,5 +1,5 @@
 import { Atom } from "@grammarly/focal"
-import { loadingStatusIdle } from "@roborox/rxjs-react/build/to-rx"
+import { loadingStatusIdle } from "@roborox/rxjs-react/build"
 import { api, ApiData } from "../../test/fixtures/api"
 import { save } from "."
 import { LoadingState } from "./domain"

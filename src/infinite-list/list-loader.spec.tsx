@@ -3,7 +3,7 @@ import { Atom } from "@grammarly/focal"
 import { act } from "react-dom/test-utils"
 import { render, waitForElement } from "@testing-library/react"
 import { LoadPageContinuation, ApiData, api } from "../../test/fixtures/api"
-import { createLoadNext, ListPartLoader } from "./loadable-list"
+import { createLoadNext, ListPartLoader } from "./create-load-next"
 import { ListLoader } from "./list-loader"
 import { InfiniteListState, listStateIdle } from "./domain"
 
