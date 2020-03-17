@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/roborox/focal-utils/compare/v1.5.0...v1.5.1) (2020-03-17)
+
+
+### Bug Fixes
+
+* update rxjs-react to 1.2.2 ([9720918](https://github.com/roborox/focal-utils/commit/9720918104905019b057db3973670a7c32cf5e03))
+
 # [1.5.0](https://github.com/roborox/focal-utils/compare/v1.4.7...v1.5.0) (2020-03-17)
 
 
