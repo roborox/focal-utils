@@ -1,3 +1,29 @@
+# [1.5.0](https://github.com/roborox/focal-utils/compare/v1.4.7...v1.5.0) (2020-03-17)
+
+
+### Bug Fixes
+
+* better error tests ([809a15e](https://github.com/roborox/focal-utils/commit/809a15e3dfd897fea5684f93f9041cac89d47754))
+* better ListLoader implementation ([57f73c1](https://github.com/roborox/focal-utils/commit/57f73c1f839a3a451438c36ebf46af98eef5b2f4))
+* InfiniteList test ([90983d7](https://github.com/roborox/focal-utils/commit/90983d7b56af7f4517ba06b59bd8c797088870e7))
+* moved infinite list to separate folder, simplified tests, changed children type to React.ReactNode ([ca4b1ac](https://github.com/roborox/focal-utils/commit/ca4b1ac75f30b2537bd1e8b04dfb6b6e6c8a6763))
+* remove unused render props for infinite list ([d38ead2](https://github.com/roborox/focal-utils/commit/d38ead2c6ce62215d7122c6a097487ddf62622c9))
+* removed timeout from tests - improved test performance ([0de0af6](https://github.com/roborox/focal-utils/commit/0de0af6543064cdda71ba6a7838a8d693af02323))
+* removed unneeded dep. renamed extractIds ([9323af0](https://github.com/roborox/focal-utils/commit/9323af09eedce00388cb1ebe93e953803d68d735))
+* rxjs-react upgrade ([f79180f](https://github.com/roborox/focal-utils/commit/f79180f641d70cb93407939681642e56b91c0538))
+* upgrade rxjs-react ([e967b5d](https://github.com/roborox/focal-utils/commit/e967b5dc3bb9cb16100a776bc5a92eef2e255df1))
+* use LoadingStatus constants, improve LoadableListState ([10aa746](https://github.com/roborox/focal-utils/commit/10aa746805579a8af6b55538eaf358686c01596f))
+* use QueueingSubject instead of ReplaySubject ([7e19989](https://github.com/roborox/focal-utils/commit/7e19989768a1dede50ea14ac09cad90ef2498dab))
+
+
+### Features
+
+* add list-loader component ([8762c31](https://github.com/roborox/focal-utils/commit/8762c31c63d9578bb16a4abf6176c18dca01be54))
+* add loadable list, update focal-utils to 1.1.0 ([19779c3](https://github.com/roborox/focal-utils/commit/19779c377742eb20f0d188da2196016480104364))
+* InfiniteList component ([bd41fc9](https://github.com/roborox/focal-utils/commit/bd41fc94d35b834c8c2cbc8a1fef459b667a530f))
+* mv loader to ./index, update rxjs-react to 1.2.0, mv loadable-list to ./create-load-next ([673bf04](https://github.com/roborox/focal-utils/commit/673bf040047c57f089ff96bf62dbb39e84e1fb99))
+* save instead of load. extractIds ([d1b53c3](https://github.com/roborox/focal-utils/commit/d1b53c3c682b310e73752f5ef99b34b8faff386c))
+
 ## [1.4.7](https://github.com/roborox/focal-utils/compare/v1.4.6...v1.4.7) (2020-02-28)
 
 
