@@ -1,4 +1,4 @@
-import { loadingStatusIdle, LoadingStatus } from "@roborox/rxjs-react/build"
+import { loadingStatusIdle, LoadingStatus } from "@roborox/rxjs-react/build/loading-state"
 
 export type InfiniteListState<D, C> = {
 	items: D[],

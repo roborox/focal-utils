@@ -1,15 +1,15 @@
 import React from "react"
 import { fireEvent, render } from "@testing-library/react"
 import { Atom, reactiveList } from "@grammarly/focal"
-import { Rx } from "@roborox/rxjs-react/build"
+import { Rx } from "@roborox/rxjs-react/build/rx"
 import { act } from "react-dom/test-utils"
 import { Observable, Subject } from "rxjs"
 import { QueueingSubject } from "queueing-subject"
-import { first } from "rxjs/operators"
+import { first, map } from "rxjs/operators"
 import { InfiniteList } from "./index"
 import { ListPartLoader } from "./create-load-next"
-import { InfiniteListState, listStateIdle } from "./domain"
 import { range } from "../../test/utils/range"
+import { InfiniteListState, listStateIdle } from "./domain"
 
 const Renderable = ({ loader, state }: {
 	loader: ListPartLoader<number, number>
@@ -33,8 +33,7 @@ const Renderable = ({ loader, state }: {
 				<button data-testid="next" onClick={load}>
 					next
 				</button>
-
-				<Rx value={state.view("status")}>
+				<Rx value={state.pipe(map(({ status }) => status))}>
 					{t => <span data-testid="status">{t.status}</span>}
 				</Rx>
 			</>
