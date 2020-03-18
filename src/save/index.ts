@@ -2,16 +2,16 @@ import { Atom } from "@grammarly/focal"
 import { createLoadingStatusError, loadingStatusSuccess, loadingStatusLoading } from "@roborox/rxjs-react/build"
 import { LoadingState, LoadingStatus } from "./domain"
 
-export interface LoadAtoms<T> {
+export interface Atoms<T> {
 	value?: Atom<T | null>
 	status?: Atom<LoadingStatus>,
 }
 
 export async function save<T>(
 	promise: Promise<T>,
-	value: LoadAtoms<T> | Atom<LoadingState<T>>,
+	value: Atoms<T> | Atom<LoadingState<T>>,
 ): Promise<void> {
-	const atoms: LoadAtoms<T> = "get" in value ? stateToAtoms(value) : value
+	const atoms: Atoms<T> = "get" in value ? stateToAtoms(value) : value
 	atoms.status?.set(loadingStatusLoading)
 
 	try {
@@ -23,7 +23,7 @@ export async function save<T>(
 	}
 }
 
-export const stateToAtoms = <T>(state: Atom<LoadingState<T>>): LoadAtoms<T> => ({
+export const stateToAtoms = <T>(state: Atom<LoadingState<T>>): Atoms<T> => ({
 	value: state.lens("value"),
 	status: state.lens("status"),
 })
