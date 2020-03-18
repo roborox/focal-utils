@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/roborox/focal-utils/compare/v1.5.1...v1.6.0) (2020-03-18)
+
+
+### Features
+
+* saveArray, upgrade rxjs-react ([ee4aeae](https://github.com/roborox/focal-utils/commit/ee4aeae588683cbc0381e480d23295f61dfa99da))
+
 ## [1.5.1](https://github.com/roborox/focal-utils/compare/v1.5.0...v1.5.1) (2020-03-17)
 
 
